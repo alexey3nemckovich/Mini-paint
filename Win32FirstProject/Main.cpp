@@ -55,6 +55,54 @@ int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
 	return 0;
 }
 
+LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc = GetDC(hWnd);
+	WORD wParamLowWord = LOWORD(wParam);
+	WORD wParamHighWord = HIWORD(wParam);
+	PAINTSTRUCT ps;
+	switch (message)
+	{
+		//Window creating
+	case WM_CREATE:
+		InitResources(hWnd);
+		break;
+		//Timer message
+	case WM_TIMER:
+		break;
+	case WM_SIZE:
+		break;
+		//Paint
+	case WM_PAINT://window repaint
+		break;
+		//Menu events
+	case WM_COMMAND:
+		MenuClick(hWnd, wParamLowWord);
+		break;
+		//Mouse events
+	case WM_RBUTTONDOWN://right mouse button down
+		break;
+	case WM_LBUTTONDOWN://left mouse button down
+		break;
+	case WM_RBUTTONUP://right mouse button up
+		break;
+	case WM_LBUTTONUP://left mouse button up
+		break;
+		//Keyboard events
+	case WM_CHAR://keyboard click
+		break;
+		//Destroying window
+	case WM_DESTROY:
+		FreeResources(hWnd);
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+	ReleaseDC(hWnd, hdc);
+	return 0;
+}
+
 ATOM RegisterWindowClass(HINSTANCE hInstance)
 {
 	WNDCLASS wc;
@@ -145,6 +193,14 @@ void InitResources(HWND hWnd)
 	SetTimer(hWnd, 1, 1000, NULL);
 }
 
+void FreeResources(HWND hWnd)
+{
+	free(openFileName.lpstrFile);
+	KillTimer(hWnd, 1);
+	DestroyWindow(aboutDialog);
+	DestroyWindow(lineThicknessDialog);
+}
+
 HWND CreateTrackbar(
 	HWND hWnd,
 	UINT minValue,
@@ -174,62 +230,6 @@ HWND CreateTrackbar(
 	SendMessage(trackBar, TBM_SETPAGESIZE, 0, (LPARAM)10);
 	SetFocus(trackBar);
 	return trackBar;
-}
-
-LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	HDC hdc = GetDC(hWnd);
-	WORD wParamLowWord = LOWORD(wParam);
-	WORD wParamHighWord = HIWORD(wParam);
-	PAINTSTRUCT ps;
-	switch (message)
-	{
-		//Window creating
-		case WM_CREATE:
-			InitResources(hWnd);
-			break;
-		//Timer message
-		case WM_TIMER:
-			break;
-		case WM_SIZE:
-			break;
-		//Paint
-		case WM_PAINT://window repaint
-			break;
-		//Menu events
-		case WM_COMMAND:
-			MenuClick(hWnd, wParamLowWord);
-			break;
-		//Mouse events
-		case WM_RBUTTONDOWN://right mouse button down
-			break;
-		case WM_LBUTTONDOWN://left mouse button down
-			break;
-		case WM_RBUTTONUP://right mouse button up
-			break;
-		case WM_LBUTTONUP://left mouse button up
-			break;
-		//Keyboard events
-		case WM_CHAR://keyboard click
-			break;
-		//Destroying window
-		case WM_DESTROY:
-			FreeResources(hWnd);
-			PostQuitMessage(0);
-			break;
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	ReleaseDC(hWnd, hdc);
-	return 0;
-}
-
-void FreeResources(HWND hWnd)
-{
-	free(openFileName.lpstrFile);
-	KillTimer(hWnd, 1);
-	DestroyWindow(aboutDialog);
-	DestroyWindow(lineThicknessDialog);
 }
 
 //model dialog about messages processer
