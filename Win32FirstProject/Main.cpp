@@ -9,6 +9,7 @@
 
 typedef std::basic_string<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>> String;
 
+//global variables
 TCHAR  WinName[] = _T("WinFrame");
 BOOL   sessionSaved = false;
 OPENFILENAMEW openFileName;
@@ -17,6 +18,7 @@ HBRUSH hBrush;
 HWND aboutDialog = NULL;
 HWND lineThicknessDialog = NULL;
 
+//functions and procedures signatures
 ATOM                  RegisterWindowClass(HINSTANCE hInstance);
 BOOL                  InitInstance(HINSTANCE, int);
 LRESULT CALLBACK      WndProcMessages(HWND, UINT, WPARAM, LPARAM);
@@ -37,6 +39,7 @@ void				  CreateDialogs();
 void				  InitResources(HWND hWnd);
 void				  FreeResources(HWND hWnd);
 
+//application start point
 int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
 {
 	HACCEL hAccelTable;
@@ -44,6 +47,7 @@ int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
 	RegisterWindowClass(This);
 	InitInstance(This, mode);
 	hAccelTable = LoadAccelerators(This, MAKEINTRESOURCE(IDR_ACCELERATOR));
+	//main window messages processing cicle
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -55,6 +59,7 @@ int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
 	return 0;
 }
 
+//main window messages processer
 LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HDC hdc = GetDC(hWnd);
@@ -72,14 +77,15 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 	case WM_SIZE:
 		break;
-		//Paint
-	case WM_PAINT://window repaint
+		//window repaint
+	case WM_PAINT:
+		LineTo(hdc, 100, 100);
 		break;
-		//Menu events
+		//menu events
 	case WM_COMMAND:
 		MenuClick(hWnd, wParamLowWord);
 		break;
-		//Mouse events
+		//mouse events
 	case WM_RBUTTONDOWN://right mouse button down
 		break;
 	case WM_LBUTTONDOWN://left mouse button down
@@ -88,10 +94,10 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 	case WM_LBUTTONUP://left mouse button up
 		break;
-		//Keyboard events
-	case WM_CHAR://keyboard click
+		//keyboard click
+	case WM_CHAR:
 		break;
-		//Destroying window
+		//destroying window
 	case WM_DESTROY:
 		FreeResources(hWnd);
 		PostQuitMessage(0);
@@ -103,6 +109,7 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return 0;
 }
 
+//init and register main window class 
 ATOM RegisterWindowClass(HINSTANCE hInstance)
 {
 	WNDCLASS wc;
@@ -119,6 +126,7 @@ ATOM RegisterWindowClass(HINSTANCE hInstance)
 	return RegisterClass(&wc);
 }
 
+//creating and initialization main window 
 BOOL InitInstance(HINSTANCE hInstance, int mode)
 {
 	HWND hWnd;
@@ -171,6 +179,7 @@ void InitChooseColorStructure(HWND hWnd)
 	chooseColor.Flags = CC_FULLOPEN | CC_RGBINIT;
 }
 
+//standard choose color dialog
 void ChooseColorProc()
 {
 	if (ChooseColor(&chooseColor) == true)
@@ -179,12 +188,14 @@ void ChooseColorProc()
 	}
 }
 
+//create dialog windows
 void CreateDialogs(HWND hWnd)
 {
 	aboutDialog = CreateDialog(NULL, MAKEINTRESOURCE(IDD_ABOUT_DIALOG), hWnd, AboutDialogProc);
 	lineThicknessDialog = CreateDialog(NULL, MAKEINTRESOURCE(IDD_LINE_THICKNESS_DIALOG), hWnd, LineThicknessDialogProc);
 }
 
+//initalization of all application resources
 void InitResources(HWND hWnd)
 {
 	InitOpenFileNameStructure(hWnd);
@@ -193,6 +204,7 @@ void InitResources(HWND hWnd)
 	SetTimer(hWnd, 1, 1000, NULL);
 }
 
+//release all application resources
 void FreeResources(HWND hWnd)
 {
 	free(openFileName.lpstrFile);
@@ -212,6 +224,7 @@ HWND CreateTrackbar(
 	)
 {
 	HWND trackBar;
+	//here is creating trackbar component
 	trackBar = CreateWindowEx(
 		0,
 		TRACKBAR_CLASS, 
@@ -226,8 +239,10 @@ HWND CreateTrackbar(
 		NULL,
 		NULL
 		);
+	//setting trackbar values range
 	SendMessage(trackBar, TBM_SETRANGE, (WPARAM)true, (LPARAM)MAKELONG(minValue, maxValue));
-	SendMessage(trackBar, TBM_SETPAGESIZE, 0, (LPARAM)10);
+	//setting the default number of logical positions the trackbar's slider moves
+	SendMessage(trackBar, TBM_SETPAGESIZE, 0, (LPARAM)5);
 	SetFocus(trackBar);
 	return trackBar;
 }
@@ -256,6 +271,7 @@ INT_PTR CALLBACK AboutDialogProc(
 	return true;
 }
 
+//model dialog line thickness messages processer
 INT_PTR CALLBACK LineThicknessDialogProc(
 	_In_ HWND   hwndDlg, 
 	_In_ UINT   uMsg, 
@@ -289,6 +305,7 @@ INT_PTR CALLBACK LineThicknessDialogProc(
 	return true;
 }
 
+//menu click processer
 void MenuClick(HWND hWnd, WORD menuItemID)
 {
 	switch (menuItemID)
@@ -318,6 +335,8 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 
 void ExitApplication(HWND hWnd)
 {
+	//if file was saved application is finishing
+	//else user should see a warning dialog window
 	if (sessionSaved)
 	{
 		ExitProcess(0);
@@ -359,6 +378,8 @@ void LoadFileDialog(HWND hWnd)
 
 BOOL LoadFile(HWND hWnd)
 {
+	//if all ok function returns true
+	//else false
 	if (GetOpenFileNameW(&openFileName) == 0)
 	{
 		if (CommDlgExtendedError() == 0)
@@ -381,6 +402,8 @@ BOOL SaveFile(HWND hWnd)
 		}
 		return false;
 	}
+	//here is creating extended windows metafile
+	//and program is writing all shapes to this file
 	HENHMETAFILE hmf;
 	HDC hdc = GetDC(hWnd);
 	HDC hdcEMF;
@@ -393,6 +416,7 @@ BOOL SaveFile(HWND hWnd)
 	return true;
 }
 
+//warning dialog
 int ShowWarning(LPCWSTR lpText, LPCWSTR lpCaption)
 {
 	int dialogResult = MessageBox(NULL, lpText, lpCaption,
