@@ -85,7 +85,7 @@ void DrawingObject::addNewOrChangeLastCoordinate(POINT newPoint)
 			}
 			else
 			{
-				if (coordinates.size() > this->minCoordinatesCount)
+				if (coordinates.size() >= this->minCoordinatesCount)
 				{
 					readyToDraw = true;
 				}

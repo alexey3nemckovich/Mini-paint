@@ -6,7 +6,7 @@
 class TextObject : public DrawingObject
 {
 protected:
-	int minCoordinatesCount = 0;
+	int minCoordinatesCount = 1;
 	int maxCoordinatesCount = -1;
 	bool limitedCoordinatesCount = false;
 	DRAWING_TYPE drawingType = SEPARATED;

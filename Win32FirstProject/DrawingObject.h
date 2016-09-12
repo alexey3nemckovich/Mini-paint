@@ -9,9 +9,9 @@ typedef std::basic_string<TCHAR, std::char_traits<TCHAR>,
 	std::allocator<TCHAR> > String;
 
 enum DRAWING_OBJECTS {
+	MULTI_LINE,
 	LINE,
 	BROKEN_LINE,
-	MULTI_LINE,
 	RECTANGLE,
 	POLYGON,
 	ELLIPSE,

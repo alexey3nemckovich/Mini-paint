@@ -391,7 +391,7 @@ void InitResources(HWND hWnd)
 	brushColor = RGB(255, 255, 255);
 	hPen = CreatePen(PS_SOLID, penThickness, penColor);
 	hBrush = CreateSolidBrush(brushColor);
-	currentShapeType = LINE;
+	currentShapeType = MULTI_LINE;
 }
 
 //release all application resources
