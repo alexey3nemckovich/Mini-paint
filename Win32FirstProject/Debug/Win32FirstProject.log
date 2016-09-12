@@ -1,16 +1,30 @@
-﻿Сборка начата 04.09.2016 17:06:51.
-     1>Проект "D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Win32FirstProject\Win32FirstProject.vcxproj" в узле 2 (целевые объекты Build).
-     1>ClCompile:
-         D:\Учёба\Среда разработки\Visual Studio 2013\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /D _CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Main.cpp
-         Main.cpp
-     1>d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(128): warning C4805: ==: небезопасное смешение типа "BOOL" и типа "bool" в операции
-     1>d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(184): warning C4101: ps: неиспользованная локальная переменная
-       Link:
-         D:\Учёба\Среда разработки\Visual Studio 2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.lib" /MACHINE:X86 Debug\Win32FirstProject.res
-         Debug\Main.obj
-         Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
-     1>Сборка проекта "D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Win32FirstProject\Win32FirstProject.vcxproj" завершена (целевые объекты Build).
-
-Сборка успешно завершена.
-
-Затраченное время: 00:00:02.49
+﻿  TextObject.cpp
+  RectangleObject.cpp
+  PolygonObject.cpp
+  MultiLineObject.cpp
+  DrawingObject.cpp
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingobject.cpp(88): warning C4018: '>': signed/unsigned mismatch
+  Main.cpp
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(92): warning C4101: 'ps': unreferenced local variable
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(369): warning C4805: '==': unsafe mix of type 'BOOL' and type 'bool' in operation
+  LineObject.cpp
+  EllipseObject.cpp
+  DrawingProcess.cpp
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(101): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(102): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(165): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(166): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(173): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(174): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
+  BrokenLineObject.cpp
+  Running Code Analysis for C/C++...
+  Generating Code...
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(373): warning C4715: 'ChooseColorProc': not all control paths return a value
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(86): warning C4715: 'DrawingProcess::createCurrentShape': not all control paths return a value
+  Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
+  Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.pdb (Full PDB)
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(63): warning C28251: Inconsistent annotation for 'wWinMain': this instance has no annotations. See c:\program files (x86)\windows kits\8.1\include\um\winbase.h(918). 
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(189): warning C6011: Dereferencing NULL pointer 'rightEdgeXCoordinates'. 
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(467): warning C6385: Reading invalid data from 'rightEdgeXCoordinates':  the readable size is 'sizeof(int)*(unsigned int)cParts' bytes, but '8' bytes may be read.
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(466): warning C6386: Buffer overrun while writing to 'rightEdgeXCoordinates':  the writable size is 'sizeof(int)*(unsigned int)cParts' bytes, but '8' bytes might be written.
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(466): warning C6011: Dereferencing NULL pointer 'rightEdgeXCoordinates'. 
