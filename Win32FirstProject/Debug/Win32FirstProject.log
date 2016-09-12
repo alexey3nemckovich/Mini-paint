@@ -1,12 +1,3 @@
-﻿  DrawingProcess.cpp
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(109): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(110): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(181): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(182): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(189): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(190): warning C4244: '=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(202): warning C4244: '*=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(203): warning C4244: '*=': conversion from 'float' to 'LONG', possible loss of data
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\drawingprocess.cpp(88): warning C4715: 'DrawingProcess::createCurrentShape': not all control paths return a value
+﻿  MultiLineObject.cpp
   Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
   Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.pdb (Full PDB)
