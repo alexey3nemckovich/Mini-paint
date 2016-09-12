@@ -1,17 +1,6 @@
 ﻿  Main.cpp
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(92): warning C4101: 'ps': unreferenced local variable
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(369): warning C4805: '==': unsafe mix of type 'BOOL' and type 'bool' in operation
-  Generating Code...
-d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(373): warning C4715: 'ChooseColorProc': not all control paths return a value
-  Skipping... (no relevant changes detected)
-  TextObject.cpp
-  RectangleObject.cpp
-  PolygonObject.cpp
-  MultiLineObject.cpp
-  LineObject.cpp
-  EllipseObject.cpp
-  DrawingProcess.cpp
-  DrawingObject.cpp
-  BrokenLineObject.cpp
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(97): warning C4101: 'ps': unreferenced local variable
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(393): warning C4805: '==': unsafe mix of type 'BOOL' and type 'bool' in operation
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(397): warning C4715: 'ChooseColorProc': not all control paths return a value
   Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
   Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.pdb (Full PDB)

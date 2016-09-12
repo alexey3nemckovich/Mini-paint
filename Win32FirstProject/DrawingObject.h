@@ -38,6 +38,7 @@ public:
 	void addDataCell(DWORD data);
 	void removeDataCell();
 	void recalculateCoordinates(int deltaX, int deltaY);
+	vector<POINT> getCoordinates();
 protected:
 	String objectData;
 	void setDrawingConditions(int minCoordinatesCount, int maxCoordinatesCount, bool unlimitedCoordinatesCount, DRAWING_TYPE drawingType, bool staticCoordinates);

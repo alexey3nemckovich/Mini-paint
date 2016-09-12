@@ -26,6 +26,19 @@ DrawingProcess::~DrawingProcess()
 	DeleteEnhMetaFile(loadedFile);
 }
 
+DrawingObject* DrawingProcess::popLastDrawingObject()
+{
+	currentShape = NULL;
+	int shapesCount = shapes.size();
+	if (shapesCount != 0)
+	{
+		DrawingObject* lastObject = shapes[shapesCount - 1];
+		shapes.pop_back();
+		return lastObject;
+	}
+	return NULL;
+}
+
 void DrawingProcess::redrawAllDrawnShapes(HDC hdc)
 {
 	int shapesCount = shapes.size();
@@ -110,7 +123,14 @@ void DrawingProcess::startOrContinueDrawingShape(POINT currentLocation, DRAWING_
 	currentLocation.y = currentLocation.y / zoom;
 	if (isDrawingNow == false)
 	{
-		this->currentShape = createCurrentShape(currentShapeType, hPen, hBrush);
+		if (workingMode == SELECTING_AREA)
+		{
+			this->currentShape = createCurrentShape(currentShapeType, hPen, (HBRUSH)GetStockObject(HOLLOW_BRUSH));
+		}
+		else
+		{
+			this->currentShape = createCurrentShape(currentShapeType, hPen, hBrush);
+		}
 		isDrawingNow = true;
 	}
 	currentShape->addNewOrChangeLastCoordinate(currentLocation);
@@ -144,6 +164,12 @@ void DrawingProcess::drawToFile(HDC fileContext)
 	RECT windowRect;
 	GetClientRect(hWnd, &windowRect);
 	FillRect(fileContext, &windowRect, CreateSolidBrush(RGB(255, 255, 255)));
+	redrawAllDrawnShapes(fileContext);
+}
+
+void DrawingProcess::drawToFile(HDC fileContext, RECT rectToDraw)
+{
+	FillRect(fileContext, &rectToDraw, CreateSolidBrush(RGB(255, 255, 255)));
 	redrawAllDrawnShapes(fileContext);
 }
 

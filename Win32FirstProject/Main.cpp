@@ -8,6 +8,7 @@
 #include <math.h>
 #include <CommCtrl.h>
 #include "DrawingProcess.h"
+#include "RectangleObject.h"
 
 typedef std::basic_string<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>> String;
 
@@ -27,6 +28,7 @@ HWND aboutDialog = NULL;
 HWND lineThicknessDialog = NULL;
 HWND statusBar = NULL;
 DrawingProcess *drawingProcess;
+DRAWING_OBJECTS remShapeType;
 DRAWING_OBJECTS currentShapeType;
 HCURSOR crossCursor;
 HCURSOR handCursor;
@@ -41,10 +43,12 @@ INT_PTR CALLBACK      LineThicknessDialogProc(_In_ HWND   hwndDlg, _In_ UINT   u
 HWND                  CreateTrackbar(HWND, UINT, UINT, UINT, UINT, UINT, UINT);
 HWND				  CreateStatusBar(HWND, int, HINSTANCE, int);
 int					  ShowWarning(LPCWSTR lpText, LPCWSTR lpCaption);
-void				  SaveFileDialog(HWND hWnd);
-BOOL				  SaveFile(HWND hWnd);
-void			      LoadFileDialog(HWND hWnd);
-BOOL	              LoadFile(HWND hWnd);
+BOOL				  GetSaveFileName(LPWSTR *fileName);
+BOOL				  GetLoadFileName(LPWSTR *fileName);
+LPWSTR				  SaveFileDialog();
+void				  SaveFile(HWND hWnd, LPWSTR fileName);
+LPWSTR			      LoadFileDialog();
+void				  LoadFile(LPWSTR fileName);
 void				  ExitApplication(HWND hWnd);
 void				  InitOpenFileNameStructure(HWND hWnd);
 void		          InitChooseColorStructure(HWND hWnd);
@@ -58,6 +62,7 @@ void				  LeftButtonDown(HWND hWnd, POINT mousePos);
 void				  LeftButtonUp(HWND hWnd, POINT mousePos);
 void				  MouseMove(HWND hWnd, POINT prevMousePos, POINT currentMousePos);
 void				  MouseWheel(HWND hWnd, WPARAM wParam);
+void				  PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *selectedRect);
 
 //application start point
 int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
@@ -218,6 +223,25 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 		case DRAWING:
 		{
 			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
+		}
+		break;
+		case SELECTING_AREA:
+		{
+			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
+			if (drawingProcess->isDrawing() == false)
+			{
+				RectangleObject* selectedArea = (RectangleObject*)drawingProcess->popLastDrawingObject();
+				LPWSTR fileName = NULL;
+				fileName = SaveFileDialog();
+				if (fileName != NULL)
+				{
+					PrintSelectedRectToFile(hWnd, fileName, selectedArea);
+				}
+				delete(selectedArea);
+				InvalidateRect(hWnd, NULL, true);
+				currentShapeType = remShapeType;
+				drawingProcess->setWorkingMode(DRAWING);
+			}
 		}
 		break;
 		default:
@@ -570,12 +594,23 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		case ID_LOAD:
 		{
-			LoadFileDialog(hWnd);
+			LPWSTR fileName = NULL;
+			fileName = LoadFileDialog();
+			if (fileName != NULL)
+			{
+				LoadFile(fileName);
+			}
+			InvalidateRect(hWnd, NULL, true);
 		}
 		break;
 		case ID_SAVE:
 		{
-			SaveFileDialog(hWnd);
+			LPWSTR fileName = NULL;
+			fileName = SaveFileDialog();
+			if (fileName != NULL)
+			{
+				SaveFile(hWnd, fileName);
+			}
 		}
 		break;
 		case ID_EXIT:
@@ -605,6 +640,13 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 			hBrush = CreateSolidBrush(brushColor);
 		}
 		break;
+		case ID_PRINT:
+		{
+			remShapeType = currentShapeType;
+			currentShapeType = RECTANGLE;
+			drawingProcess->setWorkingMode(SELECTING_AREA);
+		}
+		break;
 		default:
 			break;
 	}
@@ -624,84 +666,91 @@ void ExitApplication(HWND hWnd)
 		int result = ShowWarning(_T("Сохранить?"), _T("Файл не сохранён!"));
 		if (result == IDYES)
 		{
-			SaveFileDialog(hWnd);
+			//Exit logic
+			//
+			//SaveFileDialog(hWnd);
+			//
 		}
 		FreeResources(hWnd);
 		PostQuitMessage(0);
 	}
 }
 
-void SaveFileDialog(HWND hWnd)
-{
-	while (!SaveFile(hWnd))
-	{
-		int dialogResult = ShowWarning(_T("Повторить попытку?"), _T("Не удалось сохранить файл!"));
-		if (dialogResult == IDNO)
-		{
-			return;
-		}
-	}
-}
-
-void LoadFileDialog(HWND hWnd)
-{
-	while (!LoadFile(hWnd))
-	{
-		int dialogResult = ShowWarning(_T("Повторить попытку?"), _T("Не удалось загрузить файл!"));
-		if (dialogResult == IDNO)
-		{
-			return;
-		}
-	}
-}
-
-BOOL LoadFile(HWND hWnd)
-{
-	//if all ok function returns true
-	//else false
-	if (GetOpenFileNameW(&openFileName) == 0)
-	{
-		if (CommDlgExtendedError() == 0)
-		{
-			return true;
-		}
-		return false;
-	}
-	//think about after coding drawing
-	HDC hdc = GetDC(hWnd);
-	HENHMETAFILE hemf = GetEnhMetaFileW(openFileName.lpstrFile);
-	//
-	drawingProcess->setLoadedFile(hemf);
-	InvalidateRect(hWnd, NULL, true);
-	//RECT rect;
-	//GetClientRect(hWnd, &rect);
-	//PlayEnhMetaFile(hdc, hemf, &rect);
-	//
-	//DeleteEnhMetaFile(hemf);
-	ReleaseDC(hWnd, hdc);
-	return true;
-}
-
-BOOL SaveFile(HWND hWnd)
+BOOL GetSaveFileName(LPWSTR *fileName)
 {
 	if (GetSaveFileNameW(&openFileName) == 0)
 	{
 		if (CommDlgExtendedError() == 0)
 		{
+			(*fileName) = NULL;
 			return true;
 		}
 		return false;
 	}
+	(*fileName) = openFileName.lpstrFile;
+	return true;
+}
+
+BOOL GetLoadFileName(LPWSTR *fileName)
+{
+	if (GetOpenFileNameW(&openFileName) == 0)
+	{
+		if (CommDlgExtendedError() == 0)
+		{
+			(*fileName) = NULL;
+			return true;
+		}
+		return false;
+	}
+	(*fileName) = openFileName.lpstrFile;
+	return true;
+}
+
+LPWSTR SaveFileDialog()
+{
+	LPWSTR fileName = NULL;
+	while (!GetSaveFileName(&fileName))
+	{
+		int dialogResult = ShowWarning(_T("Повторить попытку?"), _T("Не удалось сохранить файл!"));
+		if (dialogResult == IDNO)
+		{
+			return NULL;
+		}
+	}
+	return fileName;
+}
+
+LPWSTR LoadFileDialog()
+{
+	LPWSTR fileName = NULL;
+	while (!GetLoadFileName(&fileName))
+	{
+		int dialogResult = ShowWarning(_T("Повторить попытку?"), _T("Не удалось загрузить файл!"));
+		if (dialogResult == IDNO)
+		{
+			return NULL;
+		}
+	}
+	return fileName;
+}
+
+void LoadFile(LPWSTR fileName)
+{
+	HENHMETAFILE hemf = GetEnhMetaFileW(fileName);
+	drawingProcess->setLoadedFile(hemf);
+}
+
+void SaveFile(HWND hWnd, LPWSTR fileName)
+{
 	HENHMETAFILE hmf;
 	HDC hdc = GetDC(hWnd);
 	HDC hdcEMF;
-	hdcEMF = CreateEnhMetaFile(hdc, openFileName.lpstrFile, NULL, NULL);
+	hdcEMF = CreateEnhMetaFile(hdc, fileName, NULL, NULL);
 	drawingProcess->drawToFile(hdcEMF);
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
 	sessionSaved = true;
-	return true;
 }
 
 //warning dialog
@@ -714,4 +763,22 @@ int ShowWarning(LPCWSTR lpText, LPCWSTR lpCaption)
 		MB_DEFAULT_DESKTOP_ONLY
 	);
 	return dialogResult;
+}
+
+void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *selectedRectObj)
+{
+	RECT selectedRect;
+	vector<POINT> coordinates = selectedRectObj->getCoordinates();
+	selectedRect.left = min(coordinates[0].x, coordinates[1].x);
+	selectedRect.right = max(coordinates[0].x, coordinates[1].x);
+	selectedRect.top = min(coordinates[0].y, coordinates[1].y);
+	selectedRect.bottom = max(coordinates[0].y, coordinates[1].y);
+	HENHMETAFILE hmf;
+	HDC hdc = GetDC(hWnd);
+	HDC hdcEMF;
+	hdcEMF = CreateEnhMetaFile(hdc, fileName, NULL, NULL);
+	drawingProcess->drawToFile(hdcEMF, selectedRect);
+	hmf = CloseEnhMetaFile(hdcEMF);
+	DeleteEnhMetaFile(hmf);
+	ReleaseDC(hWnd, hdc);
 }

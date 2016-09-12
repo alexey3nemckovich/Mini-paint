@@ -8,6 +8,7 @@ enum WORKING_MODE
 {
 	DRAWING,
 	MOVING,
+	SELECTING_AREA,
 };
 
 class DrawingProcess
@@ -39,10 +40,12 @@ class DrawingProcess
 		bool isDrawing();
 		void startOrContinueDrawingShape(POINT, DRAWING_OBJECTS, HPEN, HBRUSH);
 		void drawToFile(HDC);
+		void drawToFile(HDC, RECT);
 		void drawing(POINT);
 		void drawingText(DWORD);
 		void stopDrawingCurrentShape();
 		~DrawingProcess();
 		DRAWING_TYPE getDrawingType();
+		DrawingObject* popLastDrawingObject();
 };
 #endif

@@ -94,6 +94,11 @@ void DrawingObject::addNewOrChangeLastCoordinate(POINT newPoint)
 	}
 }
 
+vector<POINT> DrawingObject::getCoordinates()
+{
+	return coordinates;
+}
+
 void DrawingObject::changeLastOrAddNewCoordinate(POINT newPoint)
 {
 	if (coordinates.size() > 1)
