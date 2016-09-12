@@ -694,7 +694,7 @@ BOOL SaveFile(HWND hWnd)
 	HDC hdc = GetDC(hWnd);
 	HDC hdcEMF;
 	hdcEMF = CreateEnhMetaFile(hdc, openFileName.lpstrFile, NULL, NULL);
-	drawingProcess->redrawAllDrawnShapes(hdcEMF);
+	drawingProcess->drawToFile(hdcEMF);
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);

@@ -131,6 +131,14 @@ void DrawingProcess::recalcCoordinates()
 	}
 }
 
+void DrawingProcess::drawToFile(HDC fileContext)
+{
+	RECT windowRect;
+	GetClientRect(hWnd, &windowRect);
+	FillRect(fileContext, &windowRect, CreateSolidBrush(RGB(255, 255, 255)));
+	redrawAllDrawnShapes(fileContext);
+}
+
 void DrawingProcess::drawToHDC(HDC hdc, POINT currentLocation)
 {
 	redrawAllDrawnShapes(hdc);

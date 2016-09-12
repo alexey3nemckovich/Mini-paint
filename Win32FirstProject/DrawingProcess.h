@@ -25,6 +25,7 @@ class DrawingProcess
 		DrawingObject *currentShape;
 		vector<DrawingObject*> shapes;
 		void drawToHDC(HDC, POINT);
+		void redrawAllDrawnShapes(HDC);
 		float zoom;
 	public:
 		void setOriginTo(POINT origin);
@@ -35,7 +36,7 @@ class DrawingProcess
 		DrawingProcess(HWND);
 		bool isDrawing();
 		void startOrContinueDrawingShape(POINT, DRAWING_OBJECTS, HPEN, HBRUSH);
-		void redrawAllDrawnShapes(HDC);
+		void drawToFile(HDC);
 		void drawing(POINT);
 		void drawingText(DWORD);
 		void stopDrawingCurrentShape();
