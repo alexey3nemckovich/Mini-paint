@@ -11,6 +11,7 @@ DrawingProcess::DrawingProcess(HWND hWnd)
 	prevOrigin.y = 0;
 	workingMode = DRAWING;
 	zoom = 1;
+	loadedFile = NULL;
 }
 
 DrawingProcess::~DrawingProcess()
@@ -22,6 +23,7 @@ DrawingProcess::~DrawingProcess()
 		shapes.pop_back();
 		shapesCount--;
 	}
+	DeleteEnhMetaFile(loadedFile);
 }
 
 void DrawingProcess::redrawAllDrawnShapes(HDC hdc)
@@ -83,6 +85,12 @@ DrawingObject* DrawingProcess::createCurrentShape(DRAWING_OBJECTS shapeType, HPE
 	default:
 		break;
 	}
+}
+
+void DrawingProcess::setLoadedFile(HENHMETAFILE file)
+{
+	DeleteEnhMetaFile(loadedFile);
+	this->loadedFile = file;
 }
 
 void DrawingProcess::setOriginTo(POINT origin)
@@ -187,13 +195,27 @@ void DrawingProcess::drawing(POINT currentLocation)
 	HBITMAP mbmp = CreateCompatibleBitmap(hdc, windowWidth, windowHeight);
 	SelectObject(mdc, mbmp);
 	FillRect(mdc, &windowRect, CreateSolidBrush(RGB(255, 255, 255)));
-	//drawing logic
+
+		//drawing logic
+	//redrawing loaded file
+	if (loadedFile != NULL)
+	{
+		windowRect.right *= zoom;
+		windowRect.bottom *= zoom;
+		windowRect.left += origin.x;
+		windowRect.right += origin.x;
+		windowRect.bottom += origin.y;
+		windowRect.top += origin.y;
+		PlayEnhMetaFile(mdc, loadedFile, &windowRect);
+	}
+	//recalc
 	if (workingMode == MOVING)
 	{
 		recalcCoordinates();
 	}
+	//drawing
 	drawToHDC(mdc, currentLocation);
-	
+
 	//zoom logic
 	if (zoom != 1)
 	{

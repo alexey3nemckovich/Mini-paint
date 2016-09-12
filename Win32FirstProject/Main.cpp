@@ -670,10 +670,14 @@ BOOL LoadFile(HWND hWnd)
 	//think about after coding drawing
 	HDC hdc = GetDC(hWnd);
 	HENHMETAFILE hemf = GetEnhMetaFileW(openFileName.lpstrFile);
-	RECT rect;
-	GetClientRect(hWnd, &rect);
-	PlayEnhMetaFile(hdc, hemf, &rect);
-	DeleteEnhMetaFile(hemf);
+	//
+	drawingProcess->setLoadedFile(hemf);
+	InvalidateRect(hWnd, NULL, true);
+	//RECT rect;
+	//GetClientRect(hWnd, &rect);
+	//PlayEnhMetaFile(hdc, hemf, &rect);
+	//
+	//DeleteEnhMetaFile(hemf);
 	ReleaseDC(hWnd, hdc);
 	return true;
 }
@@ -688,8 +692,6 @@ BOOL SaveFile(HWND hWnd)
 		}
 		return false;
 	}
-	//here is creating extended windows metafile
-	//and program is writing all shapes to this file
 	HENHMETAFILE hmf;
 	HDC hdc = GetDC(hWnd);
 	HDC hdcEMF;
