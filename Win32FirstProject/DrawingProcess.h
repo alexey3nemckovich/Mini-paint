@@ -4,6 +4,7 @@
 #include <vector>
 #include "DrawingObject.h"
 #include "DrawingObjectFactory.h"
+#include "DrawingObjectFactoriesIncludeList.h"
 
 enum WORKING_MODE
 {
@@ -17,7 +18,7 @@ class DrawingProcess
 	private:
 		HPEN drawingPen;
 		HBRUSH drawingBrush;
-		//Drawing
+		DrawingObjectFactory *drawingObjectFactory;
 		HWND hWnd;
 		WORKING_MODE workingMode;
 		bool isDrawingNow = false;
@@ -25,7 +26,7 @@ class DrawingProcess
 		HBRUSH hBrush;
 		POINT prevOrigin;
 		POINT origin;
-		DrawingObject* createCurrentShape(DRAWING_OBJECTS, HPEN, HBRUSH);
+		void setCurrentDrawingObjectFactory(DRAWING_OBJECTS);
 		void recalcCoordinates();
 		DrawingObject *currentShape;
 		vector<DrawingObject*> shapes;
@@ -34,19 +35,21 @@ class DrawingProcess
 		float zoom;
 		HENHMETAFILE loadedFile;
 		void clearShapesList();
-		
+		DRAWING_OBJECTS currentDrawingObjectType;
 	public:
 		void setDrawingPen(HPEN hPen);
 		void setDrawingBrush(HBRUSH hBrush);
 		void setLoadedFile(HENHMETAFILE file);
 		void setOriginTo(POINT origin);
+		void setCurrentDrawingObjectsType(DRAWING_OBJECTS currentDrawingObjectsType);
+		DRAWING_OBJECTS getCurrentDrawingObjectsType();
 		void zoomIn(float zoom);
 		POINT getDrawingOrigin();
 		void setWorkingMode(WORKING_MODE workingMode);
 		WORKING_MODE getWorkingMode();
 		DrawingProcess(HWND);
 		bool isDrawing();
-		void startOrContinueDrawingShape(POINT, DRAWING_OBJECTS, HPEN, HBRUSH);
+		void startOrContinueDrawingShape(POINT, HPEN, HBRUSH);
 		void drawToFile(HDC);
 		void drawToFile(HDC, RECT);
 		void drawing(POINT);

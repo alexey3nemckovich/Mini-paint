@@ -45,26 +45,26 @@
     <ClCompile Include="MultiLineObject.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="BrokenLineObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="BrokenLineObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="EllipseObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="EllipseObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="LineObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="LineObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="MultiLineObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="MultiLineObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="PolygonObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="PolygonObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="RectangleObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="RectangleObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="TextObjectFactory.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="TextObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +105,9 @@
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="DrawingObjectFactory.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingObjectFactoriesIncludeList.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

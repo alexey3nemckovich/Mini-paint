@@ -1,5 +1,4 @@
 #include "DrawingProcess.h"
-#include "DrawingObjectsIncludeList.h"
 #include <Windows.h>
 
 DrawingProcess::DrawingProcess(HWND hWnd)
@@ -12,6 +11,8 @@ DrawingProcess::DrawingProcess(HWND hWnd)
 	workingMode = DRAWING;
 	zoom = 1;
 	loadedFile = NULL;
+	currentDrawingObjectType = MULTI_LINE;
+	drawingObjectFactory = new MultiLineObjectFactory();
 }
 
 DrawingProcess::~DrawingProcess()
@@ -34,6 +35,65 @@ void DrawingProcess::setDrawingPen(HPEN hPen)
 void DrawingProcess::setDrawingBrush(HBRUSH hBrush)
 {
 	this->drawingBrush = hBrush;
+}
+
+void DrawingProcess::setCurrentDrawingObjectsType(DRAWING_OBJECTS currentDrawingObjectType)
+{
+	if (currentDrawingObjectType != this->currentDrawingObjectType)
+	{
+		this->currentDrawingObjectType = currentDrawingObjectType;
+		setCurrentDrawingObjectFactory(currentDrawingObjectType);
+	}
+}
+
+DRAWING_OBJECTS DrawingProcess::getCurrentDrawingObjectsType()
+{
+	return currentDrawingObjectType;
+}
+
+void DrawingProcess::setCurrentDrawingObjectFactory(DRAWING_OBJECTS drawingObjectType)
+{
+	delete(drawingObjectFactory);
+	switch (drawingObjectType)
+	{
+		case LINE:
+		{
+			drawingObjectFactory = new LineObjectFactory();
+		}
+		break;
+		case BROKEN_LINE:
+		{
+			drawingObjectFactory = new BrokenLineObjectFactory();
+		}
+		break;
+		case MULTI_LINE:
+		{
+			drawingObjectFactory = new MultiLineObjectFactory();
+		}
+		break;
+		case RECTANGLE:
+		{
+			drawingObjectFactory = new RectangleObjectFactory();
+		}
+		break;
+		case POLYGON:
+		{
+			drawingObjectFactory = new PolygonObjectFactory();
+		}
+		break;
+		case ELLIPSE:
+		{
+			drawingObjectFactory = new EllipseObjectFactory();
+		}
+		break;
+		case TEXT:
+		{
+			drawingObjectFactory = new TextObjectFactory();
+		}
+		break;
+		default:
+			break;
+	}
 }
 
 DrawingObject* DrawingProcess::popLastDrawingObject()
@@ -73,43 +133,6 @@ DRAWING_TYPE DrawingProcess::getDrawingType()
 	return currentShape->getDrawingType();
 }
 
-DrawingObject* DrawingProcess::createCurrentShape(DRAWING_OBJECTS shapeType, HPEN hPen, HBRUSH hBrush)
-{
-	switch (shapeType)
-	{
-	case LINE:
-	{
-		return new LineObject(hPen, hBrush);
-	}
-	case BROKEN_LINE:
-	{
-		return new BrokenLineObject(hPen, hBrush);
-	}
-	case MULTI_LINE:
-	{
-		return new MultiLineObject(hPen, hBrush);
-	}
-	case RECTANGLE:
-	{
-		return new RectangleObject(hPen, hBrush);
-	}
-	case POLYGON:
-	{
-		return new PolygonObject(hPen, hBrush);
-	}
-	case ELLIPSE:
-	{
-		return new EllipseObject(hPen, hBrush);
-	}
-	case TEXT:
-	{
-		return new TextObject(hPen, hBrush);
-	}
-	default:
-		break;
-	}
-}
-
 void DrawingProcess::clearShapesList()
 {
 	int shapesCount = shapes.size();
@@ -143,7 +166,7 @@ POINT DrawingProcess::getDrawingOrigin()
 	return origin;
 }
 
-void DrawingProcess::startOrContinueDrawingShape(POINT currentLocation, DRAWING_OBJECTS currentShapeType, HPEN hPen, HBRUSH hBrush)
+void DrawingProcess::startOrContinueDrawingShape(POINT currentLocation, HPEN hPen, HBRUSH hBrush)
 {
 	currentLocation.x = currentLocation.x / zoom;
 	currentLocation.y = currentLocation.y / zoom;
@@ -151,11 +174,11 @@ void DrawingProcess::startOrContinueDrawingShape(POINT currentLocation, DRAWING_
 	{
 		if (workingMode == SELECTING_AREA)
 		{
-			this->currentShape = createCurrentShape(currentShapeType, hPen, (HBRUSH)GetStockObject(HOLLOW_BRUSH));
+			this->currentShape = drawingObjectFactory->newDrawingObject(hPen, (HBRUSH)GetStockObject(HOLLOW_BRUSH));
 		}
 		else
 		{
-			this->currentShape = createCurrentShape(currentShapeType, hPen, hBrush);
+			this->currentShape = drawingObjectFactory->newDrawingObject(hPen, hBrush);
 		}
 		isDrawingNow = true;
 	}

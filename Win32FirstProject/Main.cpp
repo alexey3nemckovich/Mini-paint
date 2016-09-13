@@ -35,7 +35,6 @@ HWND exitDialog = NULL;
 HWND statusBar = NULL;
 DrawingProcess *drawingProcess;
 DRAWING_OBJECTS remShapeType;
-DRAWING_OBJECTS currentShapeType;
 HCURSOR crossCursor;
 HCURSOR handCursor;
 bool zoom = false;
@@ -63,6 +62,7 @@ int					  ChooseColorProc();
 void				  CreateDialogs(HWND hWnd);
 void				  InitResources(HWND hWnd);
 void				  FreeResources(HWND hWnd);
+void				  StartPrinting();
 //handlers
 void				  MenuClick(HWND hWnd, WORD menuItemID);
 void				  LeftButtonDown(HWND hWnd, POINT mousePos);
@@ -179,7 +179,7 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		//keyboard click
 		case WM_CHAR:
 		{
-			if (drawingProcess->isDrawing() && (currentShapeType == TEXT))
+			if (drawingProcess->isDrawing() && (drawingProcess->getCurrentDrawingObjectsType() == TEXT))
 			{
 				if (wParam != 13)
 				{
@@ -234,7 +234,7 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 	{
 		case DRAWING:
 		{
-			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
+			drawingProcess->startOrContinueDrawingShape(mousePos, hPen, hBrush);
 			if (drawingProcess->isDrawing() == false)
 			{
 				sessionSaved = false;
@@ -244,7 +244,7 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 		break;
 		case SELECTING_AREA:
 		{
-			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
+			drawingProcess->startOrContinueDrawingShape(mousePos, hPen, hBrush);
 			if (drawingProcess->isDrawing() == false)
 			{
 				RectangleObject* selectedArea = (RectangleObject*)drawingProcess->popLastDrawingObject();
@@ -256,7 +256,7 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 				}
 				delete(selectedArea);
 				InvalidateRect(hWnd, NULL, true);
-				currentShapeType = remShapeType;
+				drawingProcess->setCurrentDrawingObjectsType(remShapeType);
 				drawingProcess->setWorkingMode(DRAWING);
 			}
 		}
@@ -433,7 +433,6 @@ void InitResources(HWND hWnd)
 	brushColor = RGB(255, 255, 255);
 	hPen = CreatePen(PS_SOLID, penThickness, penColor);
 	hBrush = CreateSolidBrush(brushColor);
-	currentShapeType = MULTI_LINE;
 }
 
 //release all application resources
@@ -618,9 +617,7 @@ INT_PTR CALLBACK ExitDialogProc(
 				case IDC_PRINT:
 				{
 					ShowWindow(hwndDlg, SW_HIDE);
-					remShapeType = currentShapeType;
-					currentShapeType = RECTANGLE;
-					drawingProcess->setWorkingMode(SELECTING_AREA);
+					StartPrinting();
 				}
 				break;
 				default:
@@ -648,37 +645,37 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 	{
 		case ID_LINE:
 		{
-			currentShapeType = LINE;
+			drawingProcess->setCurrentDrawingObjectsType(LINE);
 		}
 		break;
 		case ID_BROKEN_LINE:
 		{
-			currentShapeType = BROKEN_LINE;
+			drawingProcess->setCurrentDrawingObjectsType(BROKEN_LINE);
 		}
 		break;
 		case ID_MULTILINE:
 		{
-			currentShapeType = MULTI_LINE;
+			drawingProcess->setCurrentDrawingObjectsType(MULTI_LINE);
 		}
 		break;
 		case ID_RECTANGLE:
 		{
-			currentShapeType = RECTANGLE;
+			drawingProcess->setCurrentDrawingObjectsType(RECTANGLE);
 		}
 		break;
 		case ID_POLYGON:
 		{
-			currentShapeType = POLYGON;
+			drawingProcess->setCurrentDrawingObjectsType(POLYGON);
 		}
 		break;
 		case ID_ELLIPSE:
 		{
-			currentShapeType = ELLIPSE;
+			drawingProcess->setCurrentDrawingObjectsType(ELLIPSE);
 		}
 		break;
 		case ID_TEXT:
 		{
-			currentShapeType = TEXT;
+			drawingProcess->setCurrentDrawingObjectsType(TEXT);
 		}
 		break;
 		case ID_LOAD:
@@ -731,9 +728,7 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		case ID_PRINT:
 		{
-			remShapeType = currentShapeType;
-			currentShapeType = RECTANGLE;
-			drawingProcess->setWorkingMode(SELECTING_AREA);
+			StartPrinting();
 		}
 		break;
 		default:
@@ -828,6 +823,13 @@ int ShowWarning(LPCWSTR lpText, LPCWSTR lpCaption)
 		MB_DEFAULT_DESKTOP_ONLY
 	);
 	return dialogResult;
+}
+
+void StartPrinting()
+{
+	remShapeType = drawingProcess->getCurrentDrawingObjectsType();
+	drawingProcess->setCurrentDrawingObjectsType(RECTANGLE);
+	drawingProcess->setWorkingMode(SELECTING_AREA);
 }
 
 void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *selectedRectObj)
