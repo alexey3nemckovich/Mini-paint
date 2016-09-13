@@ -21,6 +21,7 @@ class DrawingProcess
 		DrawingObjectFactory *drawingObjectFactory;
 		HWND hWnd;
 		WORKING_MODE workingMode;
+		vector<WORKING_MODE> workingModesHistory;
 		bool isDrawingNow = false;
 		HPEN hPen;
 		HBRUSH hBrush;
@@ -42,8 +43,10 @@ class DrawingProcess
 		void setLoadedFile(HENHMETAFILE file);
 		void setOriginTo(POINT origin);
 		void setCurrentDrawingObjectsType(DRAWING_OBJECTS currentDrawingObjectsType);
+		void switchToPrevWorkingMode();
 		DRAWING_OBJECTS getCurrentDrawingObjectsType();
 		void zoomIn(float zoom);
+		float getZoom();
 		POINT getDrawingOrigin();
 		void setWorkingMode(WORKING_MODE workingMode);
 		WORKING_MODE getWorkingMode();

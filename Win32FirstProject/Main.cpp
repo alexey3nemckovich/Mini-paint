@@ -158,7 +158,7 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_MBUTTONUP:
 		{
 			SetCursor(crossCursor);
-			drawingProcess->setWorkingMode(DRAWING);
+			drawingProcess->switchToPrevWorkingMode();
 			sessionSaved = false;
 			sessionPrinted = false;
 		}
@@ -257,7 +257,7 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 				delete(selectedArea);
 				InvalidateRect(hWnd, NULL, true);
 				drawingProcess->setCurrentDrawingObjectsType(remShapeType);
-				drawingProcess->setWorkingMode(DRAWING);
+				drawingProcess->switchToPrevWorkingMode();
 			}
 		}
 		break;
@@ -836,6 +836,7 @@ void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *select
 {
 	RECT selectedRect;
 	vector<POINT> coordinates = selectedRectObj->getCoordinates();
+	float zoom = drawingProcess->getZoom();
 	selectedRect.left = min(coordinates[0].x, coordinates[1].x);
 	selectedRect.right = max(coordinates[0].x, coordinates[1].x);
 	selectedRect.top = min(coordinates[0].y, coordinates[1].y);

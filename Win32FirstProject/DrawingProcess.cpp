@@ -51,6 +51,11 @@ DRAWING_OBJECTS DrawingProcess::getCurrentDrawingObjectsType()
 	return currentDrawingObjectType;
 }
 
+float DrawingProcess::getZoom()
+{
+	return zoom;
+}
+
 void DrawingProcess::setCurrentDrawingObjectFactory(DRAWING_OBJECTS drawingObjectType)
 {
 	delete(drawingObjectFactory);
@@ -201,7 +206,7 @@ void DrawingProcess::recalcCoordinates()
 	}
 	if (shapesCount != 0)
 	{
-		if (shapes[shapesCount - 1] != currentShape)
+		if ((shapes[shapesCount - 1] != currentShape) && (currentShape != NULL))
 		{
 			currentShape->recalculateCoordinates(deltaX, deltaY);
 		}
@@ -330,8 +335,24 @@ bool DrawingProcess::isDrawing()
 	return isDrawingNow;
 }
 
+void DrawingProcess::switchToPrevWorkingMode()
+{
+	int workingModesHistorySize = workingModesHistory.size();
+	if (workingModesHistorySize > 0)
+	{
+		WORKING_MODE prevWorkingMode = workingModesHistory[workingModesHistorySize - 1];
+		workingMode = prevWorkingMode;
+		workingModesHistory.pop_back();
+	}
+}
+
 void DrawingProcess::setWorkingMode(WORKING_MODE workingMode)
 {
+	if (workingModesHistory.size() == 3)
+	{
+		workingModesHistory.pop_back();
+	}
+	workingModesHistory.push_back(this->workingMode);
 	this->workingMode = workingMode;
 }
 
