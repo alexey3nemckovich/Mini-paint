@@ -1,2 +1,7 @@
-﻿  Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
+﻿  Main.cpp
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(105): warning C4101: 'ps': unreferenced local variable
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(410): warning C4805: '==': unsafe mix of type 'BOOL' and type 'bool' in operation
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(414): warning C4715: 'ChooseColorProc': not all control paths return a value
+d:\самостоятельное изучение\c++\winapi\win32firstproject\win32firstproject\main.cpp(642): warning C4715: 'ExitDialogProc': not all control paths return a value
+  Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.exe
   Win32FirstProject.vcxproj -> D:\Самостоятельное изучение\C++\WinAPI\Win32FirstProject\Debug\Win32FirstProject.pdb (Full PDB)

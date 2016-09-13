@@ -10,6 +10,10 @@
 #include "DrawingProcess.h"
 #include "RectangleObject.h"
 
+#define FILE_NOT_SAVED_TEXT					 _T("Предупреждение: файл не сохранён.\nВыберите ваше действие.")
+#define FILE_NOT_PRINTED_TEXT				 _T("Предупреждение: файл не распечатан.\nВыберите ваше действие.")
+#define FILE_NOT_SAVED_AND_NOT_PRINTED_TEXT  _T("Предупреждение: файл не сохранён и не распечатан.\nВыберите ваше действие.")
+
 typedef std::basic_string<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>> String;
 
 //global variables
@@ -66,6 +70,7 @@ void				  LeftButtonUp(HWND hWnd, POINT mousePos);
 void				  MouseMove(HWND hWnd, POINT prevMousePos, POINT currentMousePos);
 void				  MouseWheel(HWND hWnd, WPARAM wParam);
 void				  PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *selectedRect);
+void				  ClosingApplication(HWND hWnd);
 
 //application start point
 int APIENTRY _tWinMain(HINSTANCE This, HINSTANCE prev, LPTSTR cmd, int mode)
@@ -113,6 +118,8 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			if (drawingProcess->isDrawing())
 			{
 				drawingProcess->stopDrawingCurrentShape();
+				sessionSaved = false;
+				sessionPrinted = false;
 			}
 		}
 		break;
@@ -152,6 +159,8 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		{
 			SetCursor(crossCursor);
 			drawingProcess->setWorkingMode(DRAWING);
+			sessionSaved = false;
+			sessionPrinted = false;
 		}
 		break;
 		case WM_MOUSEWHEEL:
@@ -210,14 +219,7 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_CLOSE:
 		{
-			if (!sessionSaved || !sessionSaved)
-			{
-				ShowWindow(exitDialog, SW_SHOW);
-			}
-			else
-			{
-				ExitApplication(hWnd);
-			}
+			ClosingApplication(hWnd);
 		}
 		break;
 		default:
@@ -702,14 +704,7 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		case ID_EXIT:
 		{
-			if (!sessionSaved || !sessionPrinted)
-			{
-				ShowWindow(exitDialog, SW_SHOW);
-			}
-			else
-			{
-				ExitApplication(hWnd);
-			}
+			ClosingApplication(hWnd);
 		}
 		break;
 		case ID_LINE_THICKNESS:
@@ -852,6 +847,34 @@ void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *select
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
 	sessionPrinted = true;
+}
+
+void ClosingApplication(HWND hWnd)
+{
+	if (!sessionSaved || !sessionPrinted)
+	{
+		HWND text = GetDlgItem(exitDialog, IDC_EXIT_STATIC);
+		if (!sessionSaved && !sessionPrinted)
+		{
+			SetWindowText(text, FILE_NOT_SAVED_AND_NOT_PRINTED_TEXT);
+		}
+		else
+		{
+			if (!sessionSaved)
+			{
+				SetWindowText(text, FILE_NOT_SAVED_TEXT);
+			}
+			else
+			{
+				SetWindowText(text, FILE_NOT_PRINTED_TEXT);
+			}
+		}
+		ShowWindow(exitDialog, SW_SHOW);
+	}
+	else
+	{
+		ExitApplication(hWnd);
+	}
 }
 
 void ExitApplication(HWND hWnd)
