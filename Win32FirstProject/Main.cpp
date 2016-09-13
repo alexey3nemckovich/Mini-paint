@@ -195,7 +195,6 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_SIZE:
 		{
-
 			int* rightEdgeXCoordinates = (int*)malloc(sizeof(int) * STATUS_BAR_PARTS_COUNT);
 			RECT windowRect;
 			GetClientRect(hWnd, &windowRect);
