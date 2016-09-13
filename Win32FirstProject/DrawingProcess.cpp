@@ -26,6 +26,16 @@ DrawingProcess::~DrawingProcess()
 	DeleteEnhMetaFile(loadedFile);
 }
 
+void DrawingProcess::setDrawingPen(HPEN hPen)
+{
+	this->drawingPen = hPen;
+}
+
+void DrawingProcess::setDrawingBrush(HBRUSH hBrush)
+{
+	this->drawingBrush = hBrush;
+}
+
 DrawingObject* DrawingProcess::popLastDrawingObject()
 {
 	currentShape = NULL;
@@ -250,11 +260,13 @@ void DrawingProcess::drawing(POINT currentLocation)
 		windowRect.top += origin.y;
 		PlayEnhMetaFile(mdc, loadedFile, &windowRect);
 	}
+
 	//recalc
 	if (workingMode == MOVING)
 	{
 		recalcCoordinates();
 	}
+
 	//drawing
 	drawToHDC(mdc, currentLocation);
 

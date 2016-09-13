@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <vector>
 #include "DrawingObject.h"
+#include "DrawingObjectFactory.h"
 
 enum WORKING_MODE
 {
@@ -14,6 +15,9 @@ enum WORKING_MODE
 class DrawingProcess
 {
 	private:
+		HPEN drawingPen;
+		HBRUSH drawingBrush;
+		//Drawing
 		HWND hWnd;
 		WORKING_MODE workingMode;
 		bool isDrawingNow = false;
@@ -30,7 +34,10 @@ class DrawingProcess
 		float zoom;
 		HENHMETAFILE loadedFile;
 		void clearShapesList();
+		
 	public:
+		void setDrawingPen(HPEN hPen);
+		void setDrawingBrush(HBRUSH hBrush);
 		void setLoadedFile(HENHMETAFILE file);
 		void setOriginTo(POINT origin);
 		void zoomIn(float zoom);

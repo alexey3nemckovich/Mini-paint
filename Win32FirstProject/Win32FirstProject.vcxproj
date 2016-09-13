@@ -79,15 +79,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BrokenLineObject.cpp" />
+    <ClCompile Include="BrokenLineObjectFactory.cpp" />
     <ClCompile Include="DrawingProcess.cpp" />
     <ClCompile Include="EllipseObject.cpp" />
+    <ClCompile Include="EllipseObjectFactory.cpp" />
     <ClCompile Include="LineObject.cpp" />
+    <ClCompile Include="LineObjectFactory.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="DrawingObject.cpp" />
     <ClCompile Include="MultiLineObject.cpp" />
+    <ClCompile Include="MultiLineObjectFactory.cpp" />
     <ClCompile Include="PolygonObject.cpp" />
+    <ClCompile Include="PolygonObjectFactory.cpp" />
     <ClCompile Include="RectangleObject.cpp" />
+    <ClCompile Include="RectangleObjectFactory.cpp" />
     <ClCompile Include="TextObject.cpp" />
+    <ClCompile Include="TextObjectFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BrokenLineObject.h" />
@@ -100,6 +107,7 @@
     <ClInclude Include="RectangleObject.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="DrawingObject.h" />
+    <ClInclude Include="DrawingObjectFactory.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TextObject.h" />
   </ItemGroup>
