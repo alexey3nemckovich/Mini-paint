@@ -14,7 +14,7 @@ typedef std::basic_string<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>>
 
 //global variables
 TCHAR  WinName[] = _T("WinFrame");
-BOOL   sessionSaved = false;
+BOOL   sessionStored = false;
 OPENFILENAMEW openFileName;
 CHOOSECOLOR chooseColor;
 int penColor;
@@ -26,6 +26,7 @@ HPEN hTextPen;
 HBRUSH hBrush;
 HWND aboutDialog = NULL;
 HWND lineThicknessDialog = NULL;
+HWND exitDialog = NULL;
 HWND statusBar = NULL;
 DrawingProcess *drawingProcess;
 DRAWING_OBJECTS remShapeType;
@@ -40,6 +41,8 @@ BOOL                  InitInstance(HINSTANCE, int);
 LRESULT CALLBACK      WndProcMessages(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK      AboutDialogProc(_In_ HWND   hwndDlg, _In_ UINT   uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
 INT_PTR CALLBACK      LineThicknessDialogProc(_In_ HWND   hwndDlg, _In_ UINT   uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
+INT_PTR CALLBACK      ExitDialogProc(_In_ HWND   hwndDlg, _In_ UINT   uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam);
+void				  ExitApplication(HWND hWnd);
 HWND                  CreateTrackbar(HWND, UINT, UINT, UINT, UINT, UINT, UINT);
 HWND				  CreateStatusBar(HWND, int, HINSTANCE, int);
 int					  ShowWarning(LPCWSTR lpText, LPCWSTR lpCaption);
@@ -49,7 +52,6 @@ LPWSTR				  SaveFileDialog();
 void				  SaveFile(HWND hWnd, LPWSTR fileName);
 LPWSTR			      LoadFileDialog();
 void				  LoadFile(LPWSTR fileName);
-void				  ExitApplication(HWND hWnd);
 void				  InitOpenFileNameStructure(HWND hWnd);
 void		          InitChooseColorStructure(HWND hWnd);
 int					  ChooseColorProc();
@@ -207,7 +209,14 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_CLOSE:
 		{
-			ExitApplication(hWnd);
+			if (!sessionStored)
+			{
+				ShowWindow(exitDialog, SW_SHOW);
+			}
+			else
+			{
+				ExitApplication(hWnd);
+			}
 		}
 		break;
 		default:
@@ -223,6 +232,10 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 		case DRAWING:
 		{
 			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
+			if (drawingProcess->isDrawing() == false)
+			{
+				sessionStored = false;
+			}
 		}
 		break;
 		case SELECTING_AREA:
@@ -401,6 +414,7 @@ void CreateDialogs(HWND hWnd)
 {
 	aboutDialog = CreateDialog(NULL, MAKEINTRESOURCE(IDD_ABOUT_DIALOG), hWnd, AboutDialogProc);
 	lineThicknessDialog = CreateDialog(NULL, MAKEINTRESOURCE(IDD_LINE_THICKNESS_DIALOG), hWnd, LineThicknessDialogProc);
+	exitDialog = CreateDialog(NULL, MAKEINTRESOURCE(IDD_EXIT_DIALOG), hWnd, ExitDialogProc);
 }
 
 //initalization of all application resources
@@ -425,6 +439,7 @@ void FreeResources(HWND hWnd)
 	free(openFileName.lpstrFile);
 	DestroyWindow(aboutDialog);
 	DestroyWindow(lineThicknessDialog);
+	DestroyWindow(exitDialog);
 }
 
 HWND CreateTrackbar(
@@ -504,16 +519,20 @@ INT_PTR CALLBACK AboutDialogProc(
 {
 	switch (uMsg)
 	{
-	case WM_COMMAND:
-		if (LOWORD(wParam) != IDOK)
+		case WM_COMMAND:
 		{
-			break;
+			if (LOWORD(wParam) != IDOK)
+			{
+				break;
+			}
 		}
-	case WM_CLOSE:
-		ShowWindow(hwndDlg, SW_HIDE);
+		case WM_CLOSE:
+		{
+			ShowWindow(hwndDlg, SW_HIDE);
+		}
 		break;
-	default:
-		return false;
+		default:
+			return false;
 	}
 	return true;
 }
@@ -529,27 +548,93 @@ INT_PTR CALLBACK LineThicknessDialogProc(
 	static HWND trackbar;
 	switch (uMsg)
 	{
-	case WM_HSCROLL:
+		case WM_HSCROLL:
 		break;
-	case WM_INITDIALOG:
-		RECT rect;
-		GetWindowRect(hwndDlg, &rect);
-		trackbar = CreateTrackbar(hwndDlg, 1, 30, rect.right - rect.left - 40, rect.bottom - rect.top - 100, 10, 10);
-		break;
-	case WM_COMMAND:
-		if (LOWORD(wParam) != IDOK)
+		case WM_INITDIALOG:
 		{
-			break;
+			RECT rect;
+			GetWindowRect(hwndDlg, &rect);
+			trackbar = CreateTrackbar(hwndDlg, 1, 30, rect.right - rect.left - 40, rect.bottom - rect.top - 100, 10, 10);
 		}
-		penThickness = SendMessage(trackbar, TBM_GETPOS, 0, 0);
-		hPen = CreatePen(PS_SOLID, penThickness, penColor);
-	case WM_CLOSE:
-		ShowWindow(hwndDlg, SW_HIDE);
 		break;
-	default:
-		return false;
+		case WM_COMMAND:
+		{
+			if (LOWORD(wParam) != IDOK)
+			{
+				break;
+			}
+			penThickness = SendMessage(trackbar, TBM_GETPOS, 0, 0);
+			hPen = CreatePen(PS_SOLID, penThickness, penColor);
+		}
+		case WM_CLOSE:
+		{
+			ShowWindow(hwndDlg, SW_HIDE);
+		}
+		break;
+		default:
+			return false;
 	}
 	return true;
+}
+
+//exit dialog window messages processer
+INT_PTR CALLBACK ExitDialogProc(
+	_In_ HWND   hwndDlg,
+	_In_ UINT   uMsg,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+)
+{
+	bool exit = false;
+	HWND hWnd = GetParent(hwndDlg);
+	switch (uMsg)
+	{
+		case WM_COMMAND:
+		{
+			switch (LOWORD(wParam))
+			{
+				case IDC_EXIT:
+				{
+					exit = true;
+				}
+				break;
+				case IDC_CANCEL:
+				{
+					ShowWindow(hwndDlg, SW_HIDE);
+					return 0;
+				}
+				break;
+				case IDC_SAVE:
+				{
+					ShowWindow(hwndDlg, SW_HIDE);
+					LPWSTR fileName = SaveFileDialog();
+					SaveFile(hWnd, fileName);
+				}
+				break;
+				case IDC_PRINT:
+				{
+					ShowWindow(hwndDlg, SW_HIDE);
+					remShapeType = currentShapeType;
+					currentShapeType = RECTANGLE;
+					drawingProcess->setWorkingMode(SELECTING_AREA);
+				}
+				break;
+				default:
+					break;
+			}
+		}
+		case WM_CLOSE:
+		{
+			ShowWindow(hwndDlg, SW_HIDE);
+		}
+		default:
+			break;
+	}
+	//exit
+	if (exit == true)
+	{
+		ExitApplication(hWnd);
+	}
 }
 
 //menu click processer
@@ -615,7 +700,14 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		case ID_EXIT:
 		{
-			ExitApplication(hWnd);
+			if (!sessionStored)
+			{
+				ShowWindow(exitDialog, SW_SHOW);
+			}
+			else
+			{
+				ExitApplication(hWnd);
+			}
 		}
 		break;
 		case ID_LINE_THICKNESS:
@@ -649,30 +741,6 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		default:
 			break;
-	}
-}
-
-void ExitApplication(HWND hWnd)
-{
-	//if file was saved application is finishing
-	//else user should see a warning dialog window
-	if (sessionSaved)
-	{
-		FreeResources(hWnd);
-		PostQuitMessage(0);
-	}
-	else
-	{
-		int result = ShowWarning(_T("Сохранить?"), _T("Файл не сохранён!"));
-		if (result == IDYES)
-		{
-			//Exit logic
-			//
-			//SaveFileDialog(hWnd);
-			//
-		}
-		FreeResources(hWnd);
-		PostQuitMessage(0);
 	}
 }
 
@@ -750,7 +818,7 @@ void SaveFile(HWND hWnd, LPWSTR fileName)
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
-	sessionSaved = true;
+	sessionStored = true;
 }
 
 //warning dialog
@@ -781,4 +849,11 @@ void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *select
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
+	sessionStored = true;
+}
+
+void ExitApplication(HWND hWnd)
+{
+	FreeResources(hWnd);
+	PostQuitMessage(0);
 }
