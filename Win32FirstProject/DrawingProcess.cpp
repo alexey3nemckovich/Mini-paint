@@ -100,10 +100,26 @@ DrawingObject* DrawingProcess::createCurrentShape(DRAWING_OBJECTS shapeType, HPE
 	}
 }
 
+void DrawingProcess::clearShapesList()
+{
+	int shapesCount = shapes.size();
+	DrawingObject *drawingObj;
+	for (int i = 0; i < shapesCount; i++)
+	{
+		drawingObj = popLastDrawingObject();
+		delete(drawingObj);
+	}
+}
+
 void DrawingProcess::setLoadedFile(HENHMETAFILE file)
 {
 	DeleteEnhMetaFile(loadedFile);
 	this->loadedFile = file;
+	int shapesCount = shapes.size();
+	if (shapesCount != 0)
+	{
+		clearShapesList();
+	}
 }
 
 void DrawingProcess::setOriginTo(POINT origin)

@@ -29,6 +29,7 @@ class DrawingProcess
 		void redrawAllDrawnShapes(HDC);
 		float zoom;
 		HENHMETAFILE loadedFile;
+		void clearShapesList();
 	public:
 		void setLoadedFile(HENHMETAFILE file);
 		void setOriginTo(POINT origin);

@@ -14,7 +14,8 @@ typedef std::basic_string<TCHAR, std::char_traits<TCHAR>, std::allocator<TCHAR>>
 
 //global variables
 TCHAR  WinName[] = _T("WinFrame");
-BOOL   sessionStored = false;
+BOOL sessionSaved = false;
+BOOL sessionPrinted = false;
 OPENFILENAMEW openFileName;
 CHOOSECOLOR chooseColor;
 int penColor;
@@ -209,7 +210,7 @@ LRESULT CALLBACK WndProcMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 		case WM_CLOSE:
 		{
-			if (!sessionStored)
+			if (!sessionSaved || !sessionSaved)
 			{
 				ShowWindow(exitDialog, SW_SHOW);
 			}
@@ -234,7 +235,8 @@ void LeftButtonDown(HWND hWnd, POINT mousePos)
 			drawingProcess->startOrContinueDrawingShape(mousePos, currentShapeType, hPen, hBrush);
 			if (drawingProcess->isDrawing() == false)
 			{
-				sessionStored = false;
+				sessionSaved = false;
+				sessionPrinted = false;
 			}
 		}
 		break;
@@ -700,7 +702,7 @@ void MenuClick(HWND hWnd, WORD menuItemID)
 		break;
 		case ID_EXIT:
 		{
-			if (!sessionStored)
+			if (!sessionSaved || !sessionPrinted)
 			{
 				ShowWindow(exitDialog, SW_SHOW);
 			}
@@ -818,7 +820,7 @@ void SaveFile(HWND hWnd, LPWSTR fileName)
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
-	sessionStored = true;
+	sessionSaved = true;
 }
 
 //warning dialog
@@ -849,7 +851,7 @@ void PrintSelectedRectToFile(HWND hWnd, LPWSTR fileName, RectangleObject *select
 	hmf = CloseEnhMetaFile(hdcEMF);
 	DeleteEnhMetaFile(hmf);
 	ReleaseDC(hWnd, hdc);
-	sessionStored = true;
+	sessionPrinted = true;
 }
 
 void ExitApplication(HWND hWnd)
